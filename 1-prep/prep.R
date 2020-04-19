@@ -93,6 +93,28 @@ BT <- rbind(bz,BBB)
 BT@data$id <- as.character(1:430)
 BT@data$AGS <- as.integer(BT@data$AGS)
 
+# Now Factor-Variable for INfo about Region 123
+# Raumgliederung: 1=Berlin , 2= Berliner Umland , 3= Weiterer Metropolenraum
+
+REG <- read.csv("1-prep/ecodat/01_REG.csv", 
+                sep = ";", 
+                dec = ",", 
+                na.strings = "NA", 
+                header = TRUE)
+
+# Umwandlung der Faktor-Variablen zu Zeichenketten
+REG$AGS.Bezeichnung <- as.character(REG$AGS.Bezeichnung) 
+#REG$AGS <- as.character(REG$AGS) 
+
+REG_ORD <- REG[(order(as.numeric(REG$ID))),]
+#identical(BT@data$GEN,REG_ORD$AGS.Bezeichnung)
+#identical(BT@data$AGS,REG_ORD$AGS)
+
+BT@data$reg <- as.factor(REG_ORD$REG)
+# faktor Namen noch ändern! 1=Berlin , 2= Berliner Umland , 3= Weiterer Metropolenraum
+#BT@data[which(BT@data$reg==2),1:8]
+
+
 # CSV einlesen
 WZ3 <- read.csv("1-prep/bb-data.csv", 
                 stringsAsFactors=FALSE,
@@ -182,11 +204,6 @@ UNI <- UNI[(order(as.numeric(UNI$id))),]
 # TO CHECK:   identical(BT@data$GEN[1:430],UNI$GEN[1:430])
 BT@data <- UNI
 
-# Save an object to a file
-saveRDS(BT, file = "1-prep/BT.rds")
-saveRDS(BB_plot, file = "1-prep/BB_plot.rds")
-saveRDS(Berlin, file = "1-prep/Berlin.rds")
-
 
 ## Abstandsmessung zum Berliner Zentroiden
 #P.S. wie wird Zentroid ermittelt?
@@ -194,18 +211,35 @@ saveRDS(Berlin, file = "1-prep/Berlin.rds")
 BERCENT <- cbind((rep(Berlin@data$c_long,430)),(rep(Berlin@data$c_lat,430)))  # BERLINER ZENTROID
 GEMCENT <- cbind(BT@data$c_long,BT@data$c_lat)                       # GEMEINDE-ZENTROIDE
 
-test <- apply((BERCENT-GEMCENT), 1, function(x) sqrt(sum((x[1])^2,(x[2])^2)) )
+BT@data$dist2bercentr <- apply((BERCENT-GEMCENT), 1, function(x) sqrt(sum((x[1])^2,(x[2])^2)) )
+#BT@data[which((names(BT@data))=="dist2BN")] <- NULL
+
+BT@data$GEN <- gsub(", Stadt", "", BT@data$Gemeindename)
+
+# Save R data objects to a file
+saveRDS(BT, file = "1-prep/BT.rds")
+saveRDS(BB_plot, file = "1-prep/BB_plot.rds")
+saveRDS(Berlin, file = "1-prep/Berlin.rds")
+
+#CLOSEST <- BT@data[(order(BT@data$dist2bercentr)),]
+#FARTHEST <- BT@data[(order(BT@data$dist2bercentr, decreasing = TRUE)),]      
+
 
 #...weiteres....
 
-
 # CSV für Jahre 2013 bis 2006 einlesen
-#DISTR <- BT@data[,-c(von:bis)]
-#DISTR$WZ3.52.1_2013 <- BT@data$WZ3.52.1
 DISTR <- BT@data
-all_input_files <- list.files("1-prep/ecodat", pattern = "*.csv",full.names = TRUE)
 
-for (file in all_input_files) {
+# pattern = "^BB20..\\.csv$"
+# nutzen glob to reg. expr. function:  glob2rx("BB20??.csv")
+# $ at the end means that this is end of string. ^ means only this folder
+# "dbf$" will work too, but adding \\. (. is special character in regular expressions so you need to escape it) 
+# ensure that you match only files with extension .dbf (in case you have e.g. .adbf files).
+
+bb_input_files <- list.files("1-prep/ecodat", pattern = glob2rx("BB20??.csv"),full.names = TRUE)
+
+
+for (file in bb_input_files) {
   # open the data, add to DISTR and save change:
   the_data <- read.csv(file, 
                        sep = ";", 
@@ -232,11 +266,29 @@ for (file in all_input_files) {
 }
 
 
+#------------------
 
-####### trying lapply, not working yet #############
-#test: a_csv <- all_input_files[1]
-summarize_data <- function(a_csv, the_dir) {
-  the_data <- read.csv(a_csv, 
+
+# NA-Werte durch Nullen ersetzen?
+# von <- which(names(DISTR)=="AN2013")
+# bis <- which(names(DISTR)=="AN2006")
+# DISTR[,von:bis][is.na(DISTR[,von:bis])] <- 0
+
+
+# die Vereinigung wird erneut in die gleiche Reihenfolge gebracht wie die Kartendaten
+#UNI1 <- UNI[(order(as.numeric(UNI$id))),]
+
+####
+
+# Einbringen der Häufigkeitsdaten für die Berliner Bezirke
+
+
+ber_input_files <- list.files("1-prep/ecodat", pattern = glob2rx("BER20??.csv"),full.names = TRUE)
+
+
+for (file in ber_input_files[1:8]) {
+  # open the data, add to DISTR and save change:
+  the_data <- read.csv(file, 
                        sep = ";", 
                        dec = ",", 
                        na.strings = "NA", 
@@ -248,34 +300,56 @@ summarize_data <- function(a_csv, the_dir) {
   # company-size-class:    0-9  10-49 50-249  250+
   # employee-estimate:      5     30    150   250
   UNT_info$empl <- rowSums(sweep(the_data[,c(11,12,13,14)],MARGIN=2,c(5,30,150,250),`*`))
-  UNI <- merge(DISTR, UNT_info ,by="AGS",all=TRUE) 
+  UNT_info[names(UNT_info)=="insgesamt"] <- NULL
   
   # to get the year: remove everything that is not a digit from the string a_csv
-  year <- gsub("\\D", "", basename(a_csv))
-  
-  names(UNI)[names(UNI)=="empl"] <- paste0("empl_", year,"_52_1")
-  UNI[names(UNI)=="insgesamt"] <- NULL
+  year <- gsub("\\D", "", basename(file))
+  bez <- paste0("empl_", year,"_52_1")
+  #names(UNI)[names(UNI)=="empl"] <- paste0("empl_", year,"_52_1")
+  UNI <- merge(DISTR[c("AGS","id",bez)], UNT_info ,by="AGS",all=TRUE) 
+  #transfer Berlin data from empl-col over to existing BB data in empl_2006_52_1 col
+  UNI[!is.na(UNI$empl),bez] <- UNI$empl[!is.na(UNI$empl)]
   #reorder
   UNI <- UNI[(order(as.numeric(UNI$id))),]
-  DISTR <- UNI
   
-  # write the csv to a new file
-  #write.csv(the_data, file = paste0(the_dir, "/", basename(a_csv)))
+  DISTR[bez] <- UNI[bez]
 }
 
-the_dir_ex <- "1-prep/ecodat"
-# check_create_dir(the_dir_ex)
-# get a list of all files that you want to process
-# you can use a list with the lapply function
-all_input_files <- list.files("1-prep/ecodat", pattern = "*.csv",
-                              full.names = TRUE)
+## EINLESEN DER GESAMTUNTZAHLEN an Betriebe
 
-result <- lapply(all_input_files,
-                 FUN = summarize_data,
-                 the_dir = the_dir_ex)
-invisible(lapply(all_precip_files, (FUN = summarize_data),
-                 the_dir = the_dir_ex))
-#------------------
+all_input_files <- list.files("1-prep/ecodat", pattern = glob2rx("BBBER20??GES.csv"),full.names = TRUE)
+
+for (file in all_input_files) {
+  # open the data, add to DISTR and save change:
+  the_data <- read.csv(file, 
+                       sep = ";", 
+                       dec = ",", 
+                       na.strings = "NA", 
+                       header = TRUE)
+  
+  # ?ber die gemeinsame AGS wird WZ3_52_1_2012 angef?gt
+  UNT_info <- the_data[,c(2,10)]
+  # employees are roughly estimated by company-size-class
+  # company-size-class:    0-9  10-49 50-249  250+
+  # employee-estimate:      5     30    150   250
+  UNT_info$empl <- rowSums(sweep(the_data[,c(11,12,13,14)],MARGIN=2,c(5,30,150,250),`*`))
+  UNT_info[names(UNT_info)=="insgesamt"] <- NULL
+  
+  # to get the year: remove everything that is not a digit from the string a_csv
+  year <- gsub("\\D", "", basename(file))
+  
+  UNI <- merge(DISTR, UNT_info ,by="AGS",all=TRUE) 
+  names(UNI)[names(UNI)=="empl"] <- paste0("empl_", year)
+  #UNI <- merge(DISTR[c("AGS","id","empl")], UNT_info ,by="AGS",all=TRUE) 
+  #reorder
+  UNI <- UNI[(order(as.numeric(UNI$id))),]
+  
+  DISTR <- UNI
+}
+
+
+saveRDS(DISTR, file = "1-prep/DISTR.rds")
+
 
 
 

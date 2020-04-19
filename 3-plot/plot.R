@@ -18,7 +18,7 @@ library(ggplot2)
 BT <- readRDS(file = "1-prep/BT.rds")
 BB_plot <- readRDS(file="1-prep/BB_plot.rds") #ersetzt GemBB_plot
 Berlin <- readRDS(file="1-prep/Berlin.rds")
-
+DISTR <- readRDS(file="1-prep/DISTR.rds")
 
 ## Kartenerstellung 1 
 

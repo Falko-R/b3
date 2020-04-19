@@ -1,0 +1,431 @@
+REG;ID;AGS;AGS-Bezeichnung
+1;1;11001001;Mitte
+1;2;11002002;Friedrichshain-Kreuzberg
+1;3;11003003;Pankow
+1;4;11004004;Charlottenburg-Wilmersdorf
+1;5;11005005;Spandau
+1;6;11006006;Steglitz-Zehlendorf
+1;7;11007007;Tempelhof-Schöneberg
+1;8;11008008;Neukölln
+1;9;11009009;Treptow-Köpenick
+1;10;11010010;Marzahn-Hellersdorf
+1;11;11011011;Lichtenberg
+1;12;11012012;Reinickendorf
+3;132;12051000;Brandenburg an der Havel, Stadt
+3;18;12052000;Cottbus, Stadt
+3;321;12053000;Frankfurt (Oder), Stadt
+2;35;12054000;Potsdam, Stadt
+2;222;12060005;Ahrensfelde
+3;409;12060012;Althüttendorf
+2;95;12060020;Bernau bei Berlin, Stadt
+3;405;12060024;Biesenthal, Stadt
+3;257;12060034;Breydin
+3;255;12060036;Britz
+3;44;12060045;Chorin
+3;39;12060052;Eberswalde, Stadt
+3;106;12060068;Friedrichswalde
+3;66;12060092;Hohenfinow
+3;412;12060100;Joachimsthal, Stadt
+3;265;12060128;Liepe
+3;363;12060149;Lunow-Stolzenhagen
+3;378;12060154;Marienwerder
+3;235;12060161;Melchow
+3;110;12060172;Niederfinow
+3;402;12060176;Oderberg, Stadt
+2;186;12060181;Panketal
+3;269;12060185;Parsteinsee
+3;153;12060192;Rüdnitz
+3;417;12060198;Schorfheide
+3;118;12060250;Sydower Fließ
+2;396;12060269;Wandlitz
+2;180;12060280;Werneuchen, Stadt
+3;271;12060296;Ziethen
+3;345;12061005;Alt Zauche-Wußwerk
+3;115;12061017;Bersteland
+3;408;12061020;Bestensee
+3;311;12061061;Byhleguhre-Byhlen
+3;227;12061097;Drahnsdorf
+2;397;12061112;Eichwalde
+3;200;12061164;Golßen, Stadt
+3;399;12061192;Groß Köris
+3;50;12061216;Halbe
+3;198;12061217;Heidesee
+3;183;12061219;Heideblick
+3;43;12061224;Jamlitz
+3;189;12061244;Kasel-Golzig
+2;407;12061260;Königs Wusterhausen, Stadt
+3;121;12061265;Krausnick-Groß Wasserburg
+3;348;12061308;Lieberose, Stadt
+3;261;12061316;Lübben (Spreewald), Stadt
+3;197;12061320;Luckau, Stadt
+3;119;12061328;Märkisch Buchholz, Stadt
+3;246;12061329;Märkische Heide
+2;253;12061332;Mittenwalde, Stadt
+3;135;12061344;Münchehofe
+3;312;12061352;Neu Zauche
+3;181;12061405;Rietzneuendorf-Staakow
+3;123;12061428;Schlepzig
+2;92;12061433;Schönefeld
+3;90;12061435;Schönwald
+2;138;12061444;Schulzendorf
+3;234;12061448;Schwerin
+3;278;12061450;Schwielochsee
+3;354;12061470;Spreewaldheide
+3;155;12061471;Steinreich
+3;40;12061476;Straupitz
+3;400;12061492;Teupitz, Stadt
+3;109;12061510;Unterspreewald
+2;80;12061540;Wildau
+2;184;12061572;Zeuthen
+3;239;12062024;Bad Liebenwerda, Stadt
+3;187;12062088;Crinitz
+3;211;12062092;Doberlug-Kirchhain, Stadt
+3;103;12062124;Elsterwerda, Stadt
+3;91;12062128;Falkenberg/Elster, Stadt
+3;373;12062134;Fichtwald
+3;388;12062140;Finsterwalde, Stadt
+3;143;12062177;Gorden-Staupitz
+3;233;12062196;Gröden
+3;232;12062208;Großthiemig
+3;210;12062219;Heideland
+3;178;12062224;Herzberg (Elster), Stadt
+3;272;12062232;Hirschfeld
+3;214;12062237;Hohenbucko
+3;238;12062240;Hohenleipisch
+3;258;12062282;Kremitzaue
+3;17;12062289;Lebusa
+3;429;12062293;Lichterfeld-Schacksdorf
+3;372;12062333;Massen-Niederlausitz
+3;168;12062336;Merzdorf
+3;154;12062341;Mühlberg/Elbe, Stadt
+3;140;12062372;Plessa
+3;23;12062410;Röderland
+3;209;12062417;Rückersdorf
+3;113;12062425;Sallgast
+3;256;12062440;Schilda
+3;430;12062445;Schlieben, Stadt
+3;117;12062453;Schönborn
+3;78;12062461;Schönewalde, Stadt
+3;21;12062464;Schraden
+3;270;12062469;Sonnewalde, Stadt
+3;208;12062492;Tröbitz
+3;96;12062500;Uebigau-Wahrenbrück, Stadt
+2;193;12063036;Brieselang
+2;89;12063056;Dallgow-Döberitz
+2;73;12063080;Falkensee, Stadt
+3;216;12063088;Friesack, Stadt
+3;229;12063094;Gollenberg
+3;174;12063112;Großderschau
+3;161;12063134;Havelaue
+3;212;12063142;Wiesenaue
+3;203;12063148;Ketzin/Havel, Stadt
+3;52;12063161;Kleßen-Görne
+3;36;12063165;Kotzen
+3;67;12063186;Märkisch Luch
+3;204;12063189;Milower Land
+3;47;12063202;Mühlenberge
+3;100;12063208;Nauen, Stadt
+3;70;12063212;Nennhausen
+3;236;12063228;Paulinenaue
+3;19;12063240;Pessin
+3;81;12063244;Premnitz, Stadt
+3;160;12063252;Rathenow, Stadt
+3;120;12063256;Retzow
+3;173;12063260;Rhinow, Stadt
+2;88;12063273;Schönwalde-Glien
+3;28;12063274;Seeblick
+3;51;12063293;Stechow-Ferchesar
+2;192;12063357;Wustermark
+3;359;12064009;Alt Tucheband
+2;13;12064029;Altlandsberg, Stadt
+3;124;12064044;Bad Freienwalde (Oder), Stadt
+3;84;12064053;Beiersdorf-Freudenberg
+3;325;12064057;Bleyen-Genschmar
+3;281;12064061;Bliesdorf
+3;225;12064084;Buckow (Märkische Schweiz), Stadt
+3;217;12064125;Falkenberg
+3;329;12064128;Falkenhagen (Mark)
+3;289;12064130;Fichtenhöhe
+2;398;12064136;Fredersdorf-Vogelsdorf
+3;387;12064153;Garzau-Garzin
+3;343;12064172;Golzow
+3;284;12064190;Gusow-Platkow
+3;30;12064205;Heckelberg-Brunow
+3;111;12064222;Höhenland
+2;383;12064227;Hoppegarten
+3;324;12064266;Küstriner Vorland
+3;361;12064268;Lebus, Stadt
+3;290;12064274;Letschin
+3;282;12064288;Lietzen
+3;357;12064290;Lindendorf
+3;128;12064303;Märkische Höhe
+3;293;12064317;Müncheberg, Stadt
+2;148;12064336;Neuenhagen bei Berlin
+3;317;12064340;Neuhardenberg
+3;320;12064349;Neulewin
+3;352;12064365;Neutrebbin
+3;263;12064370;Oberbarnim
+3;346;12064371;Oderaue
+2;390;12064380;Petershagen/Eggersdorf
+3;287;12064388;Podelzig
+3;242;12064393;Prötzel
+3;262;12064408;Rehfelde
+3;251;12064417;Reichenow-Möglin
+3;327;12064420;Reitwein
+2;59;12064428;Rüdersdorf bei Berlin
+3;342;12064448;Seelow, Stadt
+2;389;12064472;Strausberg, Stadt
+3;283;12064480;Treplin
+3;360;12064482;Vierlinden
+3;277;12064484;Waldsieversdorf
+3;347;12064512;Wriezen, Stadt
+3;340;12064538;Zechin
+3;45;12064539;Zeschdorf
+2;71;12065036;Birkenwerder
+3;410;12065084;Fürstenberg/Havel, Stadt
+2;38;12065096;Glienicke/Nordbahn
+3;139;12065100;Gransee, Stadt
+3;62;12065117;Großwoltersdorf
+2;202;12065136;Hennigsdorf, Stadt
+2;418;12065144;Hohen Neuendorf, Stadt
+3;191;12065165;Kremmen, Stadt
+2;146;12065180;Leegebruch
+3;420;12065193;Liebenwalde, Stadt
+3;273;12065198;Löwenberger Land
+2;381;12065225;Mühlenbecker Land
+2;176;12065251;Oberkrämer
+2;419;12065256;Oranienburg, Stadt
+3;29;12065276;Schönermark
+3;98;12065301;Sonnenberg
+3;423;12065310;Stechlin
+2;188;12065332;Velten, Stadt
+3;199;12065356;Zehdenick, Stadt
+3;286;12066008;Altdöbern
+3;245;12066041;Bronkow
+3;260;12066052;Calau, Stadt
+3;190;12066064;Frauendorf
+3;93;12066104;Großkmehlen
+3;382;12066112;Großräschen, Stadt
+3;356;12066116;Grünewald
+3;268;12066120;Guteborn
+3;416;12066124;Hermsdorf
+3;355;12066132;Hohenbocka
+3;85;12066168;Kroppen
+3;406;12066176;Lauchhammer, Stadt
+3;231;12066188;Lindenau
+3;223;12066196;Lübbenau/Spreewald, Stadt
+3;266;12066202;Luckaitztal
+3;362;12066226;Neu-Seeland
+3;276;12066228;Neupetershain
+3;69;12066240;Ortrand, Stadt
+3;415;12066272;Ruhland, Stadt
+3;243;12066285;Schipkau
+3;244;12066292;Schwarzbach
+3;264;12066296;Schwarzheide, Stadt
+3;150;12066304;Senftenberg, Stadt
+3;254;12066316;Tettau
+3;338;12066320;Vetschau/Spreewald, Stadt
+3;60;12067024;Bad Saarow
+3;344;12067036;Beeskow, Stadt
+3;322;12067040;Berkenbrück
+3;288;12067072;Briesen (Mark)
+3;126;12067076;Brieskow-Finkenheerd
+3;34;12067112;Diensdorf-Radlow
+3;353;12067120;Eisenhüttenstadt, Stadt
+2;391;12067124;Erkner, Stadt
+3;350;12067137;Friedland, Stadt
+3;249;12067144;Fürstenwalde/Spree, Stadt
+2;108;12067173;Gosen-Neu Zittau
+3;274;12067180;Groß Lindow
+2;228;12067201;Grünheide (Mark)
+3;401;12067205;Grunow-Dammendorf
+3;127;12067237;Jacobsdorf
+3;333;12067288;Langewahl
+3;280;12067292;Lawitz
+3;318;12067324;Mixdorf
+3;334;12067336;Müllrose, Stadt
+3;380;12067338;Neißemünde
+3;384;12067357;Neuzelle
+3;349;12067397;Ragow-Merz
+3;267;12067408;Rauen
+3;376;12067413;Reichenwalde
+3;331;12067426;Rietz-Neuendorf
+3;395;12067438;Schlaubetal
+2;379;12067440;Schöneiche bei Berlin
+3;61;12067458;Siehdichum
+3;53;12067469;Spreenhagen
+3;291;12067473;Steinhöfel
+3;248;12067481;Storkow (Mark), Stadt
+3;275;12067493;Tauche
+3;341;12067508;Vogelsang
+3;170;12067520;Wendisch Rietz
+3;323;12067528;Wiesenau
+2;411;12067544;Woltersdorf
+3;285;12067552;Ziltendorf
+3;162;12068052;Breddin
+3;97;12068072;Dabergotz
+3;141;12068109;Dreetz
+3;114;12068117;Fehrbellin
+3;195;12068181;Heiligengrabe
+3;303;12068188;Herzberg (Mark)
+3;377;12068264;Kyritz, Stadt
+3;301;12068280;Lindow (Mark), Stadt
+3;177;12068306;Märkisch Linden
+3;404;12068320;Neuruppin, Stadt
+3;72;12068324;Neustadt (Dosse), Stadt
+3;426;12068353;Rheinsberg, Stadt
+3;75;12068372;Rüthnick
+3;226;12068409;Sieversdorf-Hohenofen
+3;46;12068413;Storbeck-Frankendorf
+3;259;12068417;Stüdenitz-Schönermark
+3;205;12068425;Temnitzquell
+3;213;12068426;Temnitztal
+3;87;12068437;Vielitzsee
+3;218;12068452;Walsleben
+3;157;12068468;Wittstock/Dosse, Stadt
+3;403;12068477;Wusterhausen/Dosse
+3;112;12068501;Zernitz-Lohm
+3;37;12069017;Beelitz, Stadt
+3;221;12069018;Beetzsee
+3;219;12069019;Beetzseeheide
+3;237;12069020;Bad Belzig, Stadt
+3;149;12069028;Bensdorf
+3;86;12069052;Borkheide
+3;136;12069056;Borkwalde
+3;99;12069076;Brück, Stadt
+3;122;12069089;Buckautal
+3;182;12069216;Golzow
+3;144;12069224;Görzke
+3;49;12069232;Gräben
+3;77;12069249;Groß Kreutz (Havel)
+3;220;12069270;Havelsee, Stadt
+2;292;12069304;Kleinmachnow
+3;16;12069306;Kloster Lehnin
+3;145;12069345;Linthe
+2;240;12069397;Michendorf
+3;252;12069402;Mühlenfließ
+3;74;12069448;Niemegk, Stadt
+2;48;12069454;Nuthetal
+3;152;12069460;Päwesin
+3;15;12069470;Planebruch
+3;76;12069474;Planetal
+3;185;12069485;Rabenstein/Fläming
+3;175;12069537;Rosenau
+3;151;12069541;Roskow
+2;421;12069590;Schwielowsee
+3;230;12069596;Seddiner See
+2;101;12069604;Stahnsdorf
+2;116;12069616;Teltow, Stadt
+3;83;12069632;Treuenbrietzen, Stadt
+3;94;12069648;Wenzlow
+2;206;12069656;Werder (Havel), Stadt
+3;102;12069665;Wiesenburg/Mark
+3;215;12069680;Wollin
+3;201;12069688;Wusterwitz
+3;167;12069696;Ziesar, Stadt
+3;25;12070008;Bad Wilsnack, Stadt
+3;131;12070028;Berge
+3;104;12070052;Breese
+3;65;12070060;Cumlosen
+3;314;12070096;Gerdshagen
+3;194;12070125;Groß Pankow (Prignitz)
+3;247;12070145;Gülitz-Reetz
+3;241;12070149;Gumtow
+3;374;12070153;Halenbeck-Rohlsdorf
+3;156;12070173;Karstädt
+3;309;12070222;Kümmernitztal
+3;166;12070236;Lanz
+3;158;12070241;Legde/Quitzöbel
+3;169;12070244;Lenzen (Elbe), Stadt
+3;159;12070246;Lenzerwische
+3;171;12070266;Marienfließ
+3;310;12070280;Meyenburg, Stadt
+3;105;12070296;Perleberg, Stadt
+3;125;12070300;Pirow
+3;32;12070302;Plattenburg
+3;196;12070316;Pritzwalk, Stadt
+3;305;12070325;Putlitz, Stadt
+3;68;12070348;Rühstädt
+3;130;12070393;Triglitz
+3;64;12070416;Weisen
+3;31;12070424;Wittenberge, Stadt
+3;339;12071028;Briesen
+3;330;12071032;Burg (Spreewald)
+3;41;12071041;Dissen-Striesow
+3;326;12071044;Döbern, Stadt
+3;315;12071052;Drachhausen
+3;358;12071057;Drebkau, Stadt
+3;299;12071060;Drehnow
+3;316;12071074;Felixsee
+3;393;12071076;Forst (Lausitz), Stadt
+3;319;12071153;Groß Schacksdorf-Simmersdorf
+3;279;12071160;Guben, Stadt
+3;371;12071164;Guhrow
+3;386;12071176;Heinersbrück
+3;298;12071185;Hornow-Wadelsdorf
+3;332;12071189;Jämlitz-Klein Düben
+3;26;12071193;Jänschwalde
+3;367;12071244;Kolkwitz
+3;328;12071294;Neiße-Malxetal
+3;385;12071301;Neuhausen/Spree
+3;297;12071304;Peitz, Stadt
+3;364;12071337;Schenkendöbern
+3;57;12071341;Schmogrow-Fehrow
+3;336;12071372;Spremberg, Stadt
+3;313;12071384;Tauer
+3;394;12071386;Teichland
+3;335;12071392;Tschernitz
+3;300;12071401;Turnow-Preilack
+3;337;12071408;Welzow, Stadt
+3;58;12071412;Werben
+3;392;12071414;Wiesengrund
+3;142;12072002;Am Mellensee
+3;107;12072014;Baruth/Mark, Stadt
+2;164;12072017;Blankenfelde-Mahlow
+3;79;12072053;Dahme/Mark, Stadt
+3;82;12072055;Dahmetal
+2;165;12072120;Großbeeren
+3;24;12072157;Ihlow
+3;147;12072169;Jüterbog, Stadt
+3;137;12072232;Luckenwalde, Stadt
+2;163;12072240;Ludwigsfelde, Stadt
+3;179;12072297;Niedergörsdorf
+3;22;12072298;Niederer Fläming
+3;27;12072312;Nuthe-Urstromtal
+2;207;12072340;Rangsdorf
+3;20;12072426;Trebbin, Stadt
+3;172;12072477;Zossen, Stadt
+3;133;12073008;Angermünde, Stadt
+3;33;12073032;Berkholz-Meyenburg
+3;413;12073069;Boitzenburger Land
+3;56;12073085;Brüssow, Stadt
+3;307;12073093;Carmzow-Wallmow
+3;422;12073097;Casekow
+3;134;12073157;Flieth-Stegelitz
+3;304;12073189;Gartz (Oder), Stadt
+3;63;12073201;Gerswalde
+3;302;12073216;Göritz
+3;308;12073225;Gramzow
+3;55;12073261;Grünow
+3;428;12073309;Hohenselchow-Groß Pinnow
+3;414;12073384;Lychen, Stadt
+3;224;12073386;Mark Landin
+3;366;12073393;Mescherin
+3;427;12073396;Milmersdorf
+3;296;12073404;Mittenwalde
+3;368;12073429;Nordwestuckermark
+3;295;12073430;Oberuckersee
+3;250;12073440;Pinnow
+3;129;12073452;Prenzlau, Stadt
+3;369;12073458;Randowtal
+3;306;12073490;Schenkenberg
+3;351;12073505;Schöneberg
+3;370;12073520;Schönfeld
+3;425;12073532;Schwedt/Oder, Stadt
+3;365;12073565;Tantow
+3;14;12073569;Temmen-Ringenwalde
+3;424;12073572;Templin, Stadt
+3;375;12073578;Uckerfelde
+3;42;12073579;Uckerland
+3;54;12073603;Passow
+3;294;12073645;Zichow
