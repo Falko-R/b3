@@ -2,6 +2,10 @@
 
 ## Einlesen der shape- und Exceldaten
 
+#sessionInfo()
+# R version 3.6.3 (2020-02-29)
+# Platform: x86_64-w64-mingw32/x64 (64-bit)
+# Running under: Windows 10 x64 (build 18362)
 # Wechsel des Arbeitsordners zu Unterordner"Daten" 
 #setwd(paste(getwd(),"/Daten",sep=""))
 
@@ -13,9 +17,10 @@
 #library(raster)
 
 # Einlesen der shape-Dateien
-install.packages("maptools")
-#library(maptools)
-#require(maptools)
+# install.packages("maptools")
+# library(maptools)
+# require(maptools)
+# Funktion readShapePoly() ist veraltet
 # http://maptools.r-forge.r-project.org/reference/readShapePoly.html
 
 #Gemeinden <- readShapePoly("1-prep/shape/VG250_GEM.shp", 
@@ -23,6 +28,7 @@ install.packages("maptools")
 
 #install.packages("rgdal")
 library(rgdal)
+#require(rgdal)
 #Einlesen aus Shapefile: Alle 11462 deutschen Gemeindegrenzen 
 #Gemeinden umbenennen: spadf-brb-gem
 Gemeinden <- rgdal::readOGR(dsn="1-prep/shape",layer = "VG250_GEM")
@@ -49,19 +55,7 @@ bz <- spTransform(bz, CRS("+init=epsg:25832"))
 bz@proj4string <- Gemeinden@proj4string
 
 # Wichtig, dass die Objekte in den SpatialPolygonsDataFrames (Gemeinden,plr etc) in derselben Reihenfolge vorliegen, wie die Attributdaten, die wir sp?ter hinzuf?gen wollen. Deswegen sortieren wir die Gemeinden sp?ter nach ihrer id und die Bezirke hier nach der bz_id.
-# 11000000 Berlin, Stadt (alle Bezirke)
-# 11001001 Mitte
-# 11002002 Friedrichshain-Kreuzberg
-# 11003003 Pankow
-# 11004004 Charlottenburg-Wilmersdorf
-# 11005005 Spandau
-# 11006006 Steglitz-Zehlendorf
-# 11007007 Tempelhof-Schoeneberg
-# 11008008 Neukoelln
-# 11009009 Treptow-Koepenick
-# 11010010 Marzahn-Hellersdorf
-# 11011011 Lichtenberg
-# 11012012 Reinickendorf
+
 bz <- bz[order(bz@data$bz_id), ] 
 bz@data$AGS <- c(11001001,11002002,11003003,11004004,11005005,11006006,11007007,11008008,11009009,11010010,11011011,11012012)
 
@@ -111,9 +105,11 @@ REG_ORD <- REG[(order(as.numeric(REG$ID))),]
 #identical(BT@data$AGS,REG_ORD$AGS)
 
 BT@data$reg <- as.factor(REG_ORD$REG)
+# BT@data[which(BT@data$reg==2),1:8]
+# levels(BT@data$reg)
+# want to rename the 3 levels of factor variable "reg"
 # faktor Namen noch ändern! 1=Berlin , 2= Berliner Umland , 3= Weiterer Metropolenraum
-#BT@data[which(BT@data$reg==2),1:8]
-
+# levels(BT@data$reg) <- c("Berlin","Berliner Umland","Weiterer Metropolenraum")
 
 # CSV einlesen
 WZ3 <- read.csv("1-prep/bb-data.csv", 
@@ -163,69 +159,16 @@ BT@data$Bev.dichte_cl <- cut(BT@data$Bev.dichte,
                              labels=c("7-99","100-499","500-999","1000-4999","5000-13700"))
 
 # wie häufig treten die einzelnen Merkmale auf?
-table(BT@data$Bev.dichte_cl)
-##################################
-#Plot Geometrie vorbereiten
-################################
-library(rgdal)
-library(maptools)
-library(ggplot2)
-library(rgeos)
+# table(BT@data$Bev.dichte_cl)
 
-GemBB_geo <- fortify(BT, region = 'id') # Aufsplittung der Polygon-Objekte in data.frames
-# mit den einzelnen Koordinatenpaaren
+#Bundesland-variable wirklich nötig? Region reicht doch?
+BT@data$BUNDESLAND <- cut(as.numeric(BT@data$AGS), 
+                          breaks=c(0,12000000,13000000),
+                          right=FALSE,
+                          labels=c("BERLIN","BRANDENBURG"))
 
-GemBB_plot <- merge(GemBB_geo,              # logische Zusammenführung 
-                    BT@data,            # der Koordinatenpaare pro Polygon
-                    by = "id")
-# das DataFrame dient eigtl nur zum plotten, daher sollten viele Spalten raus, welche durch BT@data reingewurstet werden?
 
 ##################################
-# Erzeugung der Gemeindezentroide
-BB_centroid <- as.data.frame(coordinates(BT))
-#BB_centroid <- as.data.frame(coordinates(BBB))
-# Center of Berlin
-Berlin_centroid <- as.data.frame(coordinates(Berlin))
-
-colnames(BB_centroid) <- c("c_long", "c_lat")
-#colnames(Berlin_centroid) <- c("c_long", "c_lat")
-Berlin@data$c_long <- Berlin_centroid[1,1]
-Berlin@data$c_lat <- Berlin_centroid[1,2]
-
-# BB_centroid$id <- BBB@data$id
-BB_centroid$id <- BT@data$id
-BB_plot <- merge(GemBB_plot, 
-                 BB_centroid, 
-                 by = "id")
-
-UNI <- merge(BT@data,BB_centroid,by="id") 
-UNI <- UNI[(order(as.numeric(UNI$id))),]
-# TO CHECK:   identical(BT@data$AGS[1:430],UNI$AGS[1:430])
-# TO CHECK:   identical(BT@data$GEN[1:430],UNI$GEN[1:430])
-BT@data <- UNI
-
-
-## Abstandsmessung zum Berliner Zentroiden
-#P.S. wie wird Zentroid ermittelt?
-
-BERCENT <- cbind((rep(Berlin@data$c_long,430)),(rep(Berlin@data$c_lat,430)))  # BERLINER ZENTROID
-GEMCENT <- cbind(BT@data$c_long,BT@data$c_lat)                       # GEMEINDE-ZENTROIDE
-
-BT@data$dist2bercentr <- apply((BERCENT-GEMCENT), 1, function(x) sqrt(sum((x[1])^2,(x[2])^2)) )
-#BT@data[which((names(BT@data))=="dist2BN")] <- NULL
-
-BT@data$GEN <- gsub(", Stadt", "", BT@data$Gemeindename)
-
-# Save R data objects to a file
-saveRDS(BT, file = "1-prep/BT.rds")
-saveRDS(BB_plot, file = "1-prep/BB_plot.rds")
-saveRDS(Berlin, file = "1-prep/Berlin.rds")
-
-#CLOSEST <- BT@data[(order(BT@data$dist2bercentr)),]
-#FARTHEST <- BT@data[(order(BT@data$dist2bercentr, decreasing = TRUE)),]      
-
-
-#...weiteres....
 
 # CSV für Jahre 2013 bis 2006 einlesen
 DISTR <- BT@data
@@ -265,26 +208,20 @@ for (file in bb_input_files) {
   DISTR <- UNI
 }
 
-
 #------------------
-
 
 # NA-Werte durch Nullen ersetzen?
 # von <- which(names(DISTR)=="AN2013")
 # bis <- which(names(DISTR)=="AN2006")
 # DISTR[,von:bis][is.na(DISTR[,von:bis])] <- 0
 
-
 # die Vereinigung wird erneut in die gleiche Reihenfolge gebracht wie die Kartendaten
 #UNI1 <- UNI[(order(as.numeric(UNI$id))),]
 
 ####
-
 # Einbringen der Häufigkeitsdaten für die Berliner Bezirke
 
-
 ber_input_files <- list.files("1-prep/ecodat", pattern = glob2rx("BER20??.csv"),full.names = TRUE)
-
 
 for (file in ber_input_files[1:8]) {
   # open the data, add to DISTR and save change:
@@ -348,8 +285,129 @@ for (file in all_input_files) {
 }
 
 
-saveRDS(DISTR, file = "1-prep/DISTR.rds")
+BT@data <- DISTR
+
+################################
+#library(rgdal)
+#library(rgeos)
+#library(maptools)
+#library(ggplot2)
+#library(dplyr)
+##################################
+# Erzeugung der Gemeindezentroide
+BB_centroid <- as.data.frame(coordinates(BT))
+# Center of Berlin
+Berlin_centroid <- as.data.frame(coordinates(Berlin))
+
+colnames(BB_centroid) <- c("c_long", "c_lat")
+#colnames(Berlin_centroid) <- c("c_long", "c_lat")
+Berlin@data$c_long <- Berlin_centroid[1,1]
+Berlin@data$c_lat <- Berlin_centroid[1,2]
+
+BB_centroid$id <- BT@data$id
 
 
+UNI <- merge(BT@data,BB_centroid,by="id") 
+UNI <- UNI[(order(as.numeric(UNI$id))),]
+# TO CHECK:   identical(BT@data$AGS[1:430],UNI$AGS[1:430])
+# TO CHECK:   identical(BT@data$GEN[1:430],UNI$GEN[1:430])
+BT@data <- UNI
+
+
+## Abstandsmessung zum Berliner Zentroiden
+#Achtung unklar! wie wird Zentroid genau ermittelt???
+
+BERCENT <- cbind((rep(Berlin@data$c_long,430)),(rep(Berlin@data$c_lat,430)))  # BERLINER ZENTROID
+GEMCENT <- cbind(BT@data$c_long,BT@data$c_lat)                       # GEMEINDE-ZENTROIDE
+
+BT@data$dist2bercentr <- apply((BERCENT-GEMCENT), 1, function(x) sqrt(sum((x[1])^2,(x[2])^2)) )
+#BT@data[which((names(BT@data))=="dist2BN")] <- NULL
+
+BT@data$GEN <- gsub(", Stadt", "", BT@data$Gemeindename)
+
+# see end of script for saving of all files!
+# Save R data objects to a file
+# saveRDS(BT, file = "1-prep/BT.rds")
+# saveRDS(BB_plot, file = "1-prep/BB_plot.rds")
+# saveRDS(Berlin, file = "1-prep/Berlin.rds")
+
+#CLOSEST <- BT@data[(order(BT@data$dist2bercentr)),]
+#FARTHEST <- BT@data[(order(BT@data$dist2bercentr, decreasing = TRUE)),]      
+
+
+#...weiteres....
+
+
+#saveRDS(DISTR, file = "1-prep/DISTR.rds") # angepasstes dataframe, bereits in BT integriert
+
+saveRDS(BT, file = "1-prep/BT.rds")  # SpatialPolygonDataFrame
+saveRDS(BB_plot, file = "1-prep/BB_plot.rds")  # Df aus aufgespaltenen Polygonen, noch zu viele SPalten!
+saveRDS(Berlin, file = "1-prep/Berlin.rds")  # SpatialPolygonDataFrame?
+
+
+
+# ab in plot-file
+
+library(dplyr)
+test <- GemBB_plot %>% distinct(long,lat)
+BB_edge <- GemBB_plot
+
+#unique(GemBB_plot[,2:3])
+test <- GemBB_plot[-(duplicated(GemBB_plot[c(2,3)])),]
+
+#ber wird wohl nur beim plotten gebraucht und daher in plot.R erzeugt, kann hier weg
+ber <- BT@data$AGS[as.numeric(BER_BB@data$AGS)<12000000]
+
+test$group[(test$AGS %in% ber)] <- test$group[(test$AGS %in% ber)][2]  #berliner rand
+test$group[!(test$AGS %in% ber)] <- test$group[!(test$AGS %in% ber)][1]   #brandenburger rand
+#GemBB_plot[(GemBB_plot$AGS %in% ber),]
+
+
+file <- "1-prep/ecodat/db/DB07-18-52_1.csv"
+# open the data, add to DISTR and save change:
+db <- read.csv(file ,sep = ";", dec = ",", na.strings = "NA", header = TRUE, stringsAsFactors = FALSE)
+
+db[c("Datenbasis","X","Wirtschaftszweig..WZ2008.")] <- NULL
+names(db) <- c("year","reg","size","amt")
+db <- db[1:(length(db$year)-3),] 
+
+#levels(db$size)[2]
+
+db$est <- sapply(db$size, switch, 
+                  "0  bis     9" = "5", 
+                 "10  bis   49" = "30", 
+                 "50  bis 249" = "150", 
+                 "250 und mehr" = "250")
+
+db %>% 
+  mutate(est = case_when(
+    size == "0  bis     9" ~ 5,
+    cyl == 8 & disp > median(disp) ~ "8 cylinders, large displacement",
+    TRUE ~ "other"
+  )
+)
+
+
+
+changelevels <- function(f, ...) {
+  f <- as.factor(f)
+  levels(f) <- list(...)
+  f
+}
+db$est <- changelevels(db$size, "5"="0  bis     9", "30"="10  bis   49", "150"="50  bis 249" , "250"="250 und mehr")
+db[,"est"] <- as.numeric(as.character(db[,"est"]))
+db[,"amt"] <- as.numeric(db[,"amt"])
+db$amt[is.na(db["amt"])] <- 0
+db$empl <- db$amt*db$est
+db1 <- aggregate(empl ~ year+reg, data=db, FUN=sum, na.rm=TRUE)  # aggregate(. ~reg,db,sum) with "." meaning "aggregate all" columns wrt "reg"
+
+#alternativ:
+#library(dplyr)
+#library(tidyr)
+#db2 <- db %>% group_by(reg,year) %>% summarize(sum_empl = sum(empl))
+
+db3 <- spread(db1,year,empl)
+
+db3[2:13,"reg"]
 
 
