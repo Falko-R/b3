@@ -16,9 +16,7 @@ library(ggplot2)
 
 # Restore SpatialDataFrame object
 BT <- readRDS(file = "1-prep/BT.rds")
-#BB_plot <- readRDS(file="1-prep/BB_plot.rds") #ersetzt GemBB_plot?
 Berlin <- readRDS(file="1-prep/Berlin.rds")
-#DISTR <- readRDS(file="1-prep/DISTR.rds") # nicht benötigt, da in BT@data enthalten
 
 ## Vorbereitung
 GemBB_geo <- fortify(BT, region = 'id') # Aufsplittung der Polygon-Objekte in data.frames
@@ -190,7 +188,7 @@ ber <- BT@data$AGS[as.numeric(BT@data$AGS)<12000000]
 
 
 p9 <- ggplot() +                             # neue Geometrie: Polygon
-  geom_polygon(data = BB_plot,            # vorbereiteter Datensatz (fortify, merge)
+  geom_polygon(data = BB_plot, #GemBB_plot?           # vorbereiteter Datensatz (fortify, merge)
                aes(x = long,                 # X-Koordinaten
                    y = lat,                  # Y-Koordinaten
                    group = group,            # Zusammengehoerigkeit der Knoten pro Polygon
@@ -230,7 +228,7 @@ p9 <- ggplot() +                             # neue Geometrie: Polygon
 p9
 
 p8 <- ggplot() +                             # neue Geometrie: Polygon
-  geom_polygon(data = BB_plot,               # vorbereiteter Datensatz (fortify, merge)
+  geom_polygon(data = BB_plot,  #Gem_BB?             # vorbereiteter Datensatz (fortify, merge)
                aes(x = long,                 # X-Koordinaten
                    y = lat,                  # Y-Koordinaten
                    group = group,            # Zusammengehoerigkeit der Knoten pro Polygon

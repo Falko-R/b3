@@ -288,12 +288,7 @@ for (file in all_input_files) {
 BT@data <- DISTR
 
 ################################
-#library(rgdal)
-#library(rgeos)
-#library(maptools)
-#library(ggplot2)
-#library(dplyr)
-##################################
+
 # Erzeugung der Gemeindezentroide
 BB_centroid <- as.data.frame(coordinates(BT))
 # Center of Berlin
@@ -325,26 +320,17 @@ BT@data$dist2bercentr <- apply((BERCENT-GEMCENT), 1, function(x) sqrt(sum((x[1])
 
 BT@data$GEN <- gsub(", Stadt", "", BT@data$Gemeindename)
 
-# see end of script for saving of all files!
+
 # Save R data objects to a file
-# saveRDS(BT, file = "1-prep/BT.rds")
-# saveRDS(BB_plot, file = "1-prep/BB_plot.rds")
-# saveRDS(Berlin, file = "1-prep/Berlin.rds")
-
-#CLOSEST <- BT@data[(order(BT@data$dist2bercentr)),]
-#FARTHEST <- BT@data[(order(BT@data$dist2bercentr, decreasing = TRUE)),]      
-
-
-#...weiteres....
-
-
-#saveRDS(DISTR, file = "1-prep/DISTR.rds") # angepasstes dataframe, bereits in BT integriert
 
 saveRDS(BT, file = "1-prep/BT.rds")  # SpatialPolygonDataFrame
-saveRDS(BB_plot, file = "1-prep/BB_plot.rds")  # Df aus aufgespaltenen Polygonen, noch zu viele SPalten!
+#saveRDS(BB_plot, file = "1-prep/BB_plot.rds")  # Df aus aufgespaltenen Polygonen, noch zu viele SPalten!
 saveRDS(Berlin, file = "1-prep/Berlin.rds")  # SpatialPolygonDataFrame?
 
 
+
+#CLOSEST <- BT@data[(order(BT@data$dist2bercentr)),]
+#FARTHEST <- BT@data[(order(BT@data$dist2bercentr, decreasing = TRUE)),]   
 
 # ab in plot-file
 
@@ -363,51 +349,7 @@ test$group[!(test$AGS %in% ber)] <- test$group[!(test$AGS %in% ber)][1]   #brand
 #GemBB_plot[(GemBB_plot$AGS %in% ber),]
 
 
-file <- "1-prep/ecodat/db/DB07-18-52_1.csv"
-# open the data, add to DISTR and save change:
-db <- read.csv(file ,sep = ";", dec = ",", na.strings = "NA", header = TRUE, stringsAsFactors = FALSE)
+###########################################################################################
 
-db[c("Datenbasis","X","Wirtschaftszweig..WZ2008.")] <- NULL
-names(db) <- c("year","reg","size","amt")
-db <- db[1:(length(db$year)-3),] 
-
-#levels(db$size)[2]
-
-db$est <- sapply(db$size, switch, 
-                  "0  bis     9" = "5", 
-                 "10  bis   49" = "30", 
-                 "50  bis 249" = "150", 
-                 "250 und mehr" = "250")
-
-db %>% 
-  mutate(est = case_when(
-    size == "0  bis     9" ~ 5,
-    cyl == 8 & disp > median(disp) ~ "8 cylinders, large displacement",
-    TRUE ~ "other"
-  )
-)
-
-
-
-changelevels <- function(f, ...) {
-  f <- as.factor(f)
-  levels(f) <- list(...)
-  f
-}
-db$est <- changelevels(db$size, "5"="0  bis     9", "30"="10  bis   49", "150"="50  bis 249" , "250"="250 und mehr")
-db[,"est"] <- as.numeric(as.character(db[,"est"]))
-db[,"amt"] <- as.numeric(db[,"amt"])
-db$amt[is.na(db["amt"])] <- 0
-db$empl <- db$amt*db$est
-db1 <- aggregate(empl ~ year+reg, data=db, FUN=sum, na.rm=TRUE)  # aggregate(. ~reg,db,sum) with "." meaning "aggregate all" columns wrt "reg"
-
-#alternativ:
-#library(dplyr)
-#library(tidyr)
-#db2 <- db %>% group_by(reg,year) %>% summarize(sum_empl = sum(empl))
-
-db3 <- spread(db1,year,empl)
-
-db3[2:13,"reg"]
 
 
