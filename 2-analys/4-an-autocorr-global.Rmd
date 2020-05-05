@@ -1,0 +1,107 @@
+---
+title: "Autokorrelation"
+author: "Falko KC"
+date: "5/5/2020"
+output: html_document
+---
+
+```{r global_options, echo=FALSE ,warning=FALSE,message=FALSE,include=FALSE}
+knitr::opts_chunk$set(fig.path="rmd-plots/", 
+                      #fig.width=12, fig.height=8, 
+                      echo=TRUE, results="show", 
+                      background="grey")
+
+# verwendete R Basisfunktionen
+#
+#  as.numeric     Umwandlung von "character" (string) Format etc. in "numeric" (float) Format
+#  as.POSIXct     Umwandlung in Zeitformat
+#  gsub           Ersetzen eines Zeichens durch ein anderes
+#  paste          Zusammenfuegen zweier Zeichenstraenge
+#  as.Date        Umwandlung in Datumformat
+#  sapply         
+
+```
+
+```{r load_packages, echo=FALSE, include=FALSE, warning=FALSE, show=TRUE}
+# options(scipen=100,digits=12) 
+# Numerische Werte werden auf 12 Dezimalstellen gespeichert, 
+# bevorzugterweise nicht in Exponentialschreibweise
+
+library(tidyverse)
+#library(maptools)
+#library(ggplot2)
+library(tmap)
+#library(rgdal)
+#library(grid)
+#library(gridExtra)
+#library(raster)
+library(sp)
+library(spdep)
+```
+
+# Vorbereitung
+
+## Einlesen der shape- und Exceldaten
+
+## global morans I (based on centroids)
+
+This is Sparta!
+
+```{r prep_data_1,warning = FALSE,message = FALSE, echo=TRUE}
+# Restore SpatialDataFrame object
+BT <- readRDS(file = "../1-prep/BT.rds")
+BT$emp_bev <- BT$empl_2013/BT$Bevölkerung.2014
+'%!in%' <- function(x,y)!('%in%'(x,y))
+
+SPDF <- BT[BT$reg %in% c(1,2), ]
+
+```
+
+## Including Plots
+
+Mit Hilfe des Pakets tmap plotten wir die Verteilung per Quantil-Klassifikationsschema in \@ref(fig:overview):
+
+
+```{r overview,fig.cap="CAPTION",warning = FALSE, echo=FALSE, out.width="50%",fig.show="hold",fig.align = "default"}
+#,fig.align='center',fig.width=3, fig.height=3 , out.width='.49\\linewidth'
+#knitr::include_graphics("https://discourse-cdn-sjc1.com/......jpeg")
+#knitr::include_graphics(rep(c("1.jpg","2.jpg","3.jpg"),1))
+
+#hist(SPDF$Fläche.km2,breaks=50)
+
+p1 <- tm_shape(SPDF) + tm_polygons(style="quantile", col = "emp_bev") +
+  tm_legend(outside = TRUE, text.size = .8)
+
+p2 <- tm_shape(SPDF) + tm_polygons(style="quantile", col = "Fläche.km2") +
+  tm_legend(outside = TRUE, text.size = .8)
+
+p3 <- tm_shape(SPDF) + tm_polygons(style="quantile", col = "Bevölkerung.2014") +
+  tm_legend(outside = TRUE, text.size = .8)
+
+p1
+p2
+p3
+```
+
+Wir definieren Nachbarschaften der Polygone:
+Wir nutzen die Queen-Definition für Nachbarschaft: 
+Angrenzende Polygone welche mind. 1 Knoten teilen (queen=TRUE) stehen in räuml. Beziehung
+ALternativ: Polygone welche mind. 1 Kante teilen (d.h. mind. 2 Knoten) (queen=FALSE) 
+
+
+```{r prep_data_2,warning = FALSE,message = FALSE, echo=TRUE}
+#snap=sqrt(.Machine$double.eps*1000) erlaubt Lücken, wie sie durch das Einfügen Berliner Bezirke entstehen
+
+# first order queen contiguity
+nb_qc <- poly2nb(SPDF, row.names=SPDF$id,queen=TRUE,snap=50)
+# first order rook contiguity
+nb_rc <- poly2nb(SPDF, row.names=SPDF$id,queen=FALSE,snap=50)
+# second order queen contiguity
+nb_sqc <- nblag(nb_qc,2)
+# second order rook contiguity
+nb_src <- nblag(nb_rc,2)
+
+```
+
+
+

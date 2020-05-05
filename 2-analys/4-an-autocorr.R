@@ -1,33 +1,36 @@
 # Restore SpatialDataFrame object
+#? DISTR <- BT@data
 BT <- readRDS(file = "1-prep/BT.rds")
-DISTR <- BT@data
-#BER_BB <- readRDS("Daten1/BER_BB_SpatialPolygonDF.rds")
-#DISTR <- readRDS("Daten1/BER_BB_data.rds")
+# neues File
+#BT <- readRDS(file = "1-prep/BT2.rds")
 
-BT1 <- BT[BT$reg==1, ]
+'%!in%' <- function(x,y)!('%in%'(x,y))
+
+BER <- BT[BT$reg==1, ]
 BT2 <- BT[BT$reg==2, ]
 BT21 <- BT2[BT2$GEN!="Potsdam", ]
-BT3 <- BT[BT$reg==3, ]
-#ber <- BT@data$AGS[as.numeric(BT@data$AGS)<12000000]
-BER <- BT[BT$SN_L %in% c("11"), ]
-BB <- BT[BT$SN_L %in% c("12"), ]
-'%!in%' <- function(x,y)!('%in%'(x,y))
+#BT21 <- BT[BT$reg %in% c(1,2), ]
+
+BB <- BT[BT$reg %in% c(2,3), ]
 BB2 <- BB[BB$GEN %!in% c("Potsdam","Cottbus","Brandenburg an der Havel","Frankfurt (Oder)"), ]
-#"Oranienburg"
+
+#Aussortieren
 #BB$GEN[BB$empl_2013==21110]
+#"Oranienburg"
 #BT$GEN[BT$emp_bev==max(BT$emp_bev)]
 BT2 <- BT[BT$GEN %!in% c("Schenkenberg"), ]
-
 
 # Spatial object BT hat viele Attribute, 
 # relevant: empl_2013, empl_2013_52_1, Fläche.km2, Bev.dichte, Bevölkerung.2014, Betriebe.pro.km2
 hist(BT3$Bevölkerung.2014,breaks=50)
 boxplot(BT3$Bevölkerung.2014, las = 2)
+
+hist(BT2$emp_bev,breaks=50)
+boxplot(BT2$emp_bev, las = 2)
 # Besser abgeleitete Attribute und rates statt Bev und empl
 BT$emp_bev <- BT$empl_2013/BT$Bevölkerung.2014
-boxplot(BT$emp_bev)
-hist(BT$emp_bev,breaks=50)
-
+boxplot(BT$Fläche.km2)
+hist(BT$Fläche.km2,breaks=50)
 
 # Mit Hilfe des Pakets tmap plotten wir die Verteilung per Quantil-Klassifikationsschema
 library(tmap)
@@ -52,33 +55,60 @@ plot(BT21, col=2:7)
 xy <- coordinates(BT21)
 points(xy, cex=2, pch=20, col='white')
 text(BT21, 'id', cex=1.5)
+########################################################################################
 
+
+SPDF <- BT[BT$reg %in% c(1,2), ]
 
 # Definieren Nachbarschaften der Polygone
 # Wir nutzen die Queen-Definition für Nachbarschaft: 
 # Angrenzende Polygone welche mind. 1 Knoten teilen (queen=TRUE) stehen in räuml. Beziehung
-# ALternativ: Polygone welche mind. 1 Kante teilen (queen=FALSE) 
+# ALternativ: Polygone welche mind. 1 Kante teilen (d.h. mind. 2 Knoten) (queen=FALSE) 
 
 library(spdep)
-nb <- poly2nb(BT21, queen=FALSE)
+#snap=sqrt(.Machine$double.eps*1000) erlaubt Lücken, wie sie durch das Einfügen Berliner Bezirke entstehen
+# first order queen contiguity
+nb_qc <- poly2nb(SPDF, row.names=SPDF$id,queen=TRUE,snap=50)
+# first order rook contiguity
+nb_rc <- poly2nb(SPDF, row.names=SPDF$id,queen=FALSE,snap=50)
+# second order queen contiguity
+nb_sqc <- nblag(nb_qc,2)
+# second order rook contiguity
+nb_src <- nblag(nb_rc,2)
+
+
 #w <- poly2nb(BB, row.names=BB$AGS, queen=TRUE)
 # class(w)
 # summary(w)
 # str(w)
 
 # Für jedes Polygon sind in nb alle Nachbarn gespeichert
-
 # für das erste Polygon des Spatial Object mit Namen:
 # BT$GEN[1]
 # Nachbarn des ersten Polygons (gibt IDs aus):
 # nb[[1]]
 # Namen der Nachbarn:
 # BT$GEN[nb[[1]]]
+# second order infos abrufen
+#nb_sqc[[2]]
+
+# Distance-based neighbours
+coords <- coordinates(SPDF) # get centroid coordinates
+# 1. Euclidean distance between centroids: dnearneigh
+nb_d <- dnearneigh(coords, 0, 13000,row.names = SPDF$id)  #upper and lower distance bounds in km??
+# 2. number of k nearest neighbors: knn2nb
+nb_5 <- knn2nb(knearneigh(coords,k=5),row.names = SPDF$id)
+
+
 
 # Plotten die links zwischen den Polygonen
-xy <- coordinates(BT21)
-plot(BT21, col='gray', border='blue', lwd=1)
-plot(nb, xy, col='red', lwd=1, add=TRUE)
+# coords <- coordinates(BT2) # get centroid coordinates
+plot(SPDF, col='gray', border='blue', lwd=1)
+plot(nb_d, coords, col='red', lwd=1, add=TRUE)
+
+#mat <- nb2mat(nb, style="B")
+#colnames(mat) <- rownames(mat)
+
 
 # Jedem Nachbarschaftspolygon wird ein Gewicht zugewiesen
 # style="W" weist jedem Nachbarn identische Gewichte zu (1/Anzahl Nachbarn)
@@ -88,17 +118,22 @@ plot(nb, xy, col='red', lwd=1, add=TRUE)
 # zero.policy=TRUE erlaubt die Listung von Gemeinden ohne Nachbarn, welche jedoch die Anzahl n in der I und c Statistik 
 # aufblähen würden (betrifft uns hier aber nicht)
 
-lw <- nb2listw(nb, style="B", zero.policy=TRUE)
+lw <- nb2listw(nb_d, style="W", zero.policy=TRUE)
 #alternativ
 #lw <- nb2listw(nb, style='W',zero.policy=TRUE)
 
 # z.B. die Gewichte der Nachbarn des ersten Polygons (Berlin-Mitte)
 # Wird etwa das lokale Durchschnittseinkommen berechnet, so fließt das Einkommen eines jeden Nachbarn zu 20% ein
-lw$weights[1]
+# lw$weights[1]
+
+
+MC<- moran.mc(SPDF$emp_bev, lw, nsim=1999)
+MC
+plot(MC, main="", las=1)
 
 # manuelle Berechnung MORAN I
-n <- length(BB)
-y <- BB$Bevölkerung.2014
+n <- length(SPDF)
+y <- SPDF$Bevölkerung.2014
 ybar <- mean(y)
 
 dy <- y - ybar
@@ -126,16 +161,19 @@ EI
 
 
 # automatische Berechnung MORAN I
-moran(BT21$Bevölkerung.2014, lw, n=length(lw$neighbours), S0=Szero(lw))
+moran(SPDF$emp_bev, lw, n=length(lw$neighbours), S0=Szero(lw))
 
 # einfache MORAN I Berechnung
-moran.test(BT21$Bevölkerung.2014,lw, randomisation=TRUE)
+moran.test(SPDF$emp_bev,lw, randomisation=TRUE)
 # test under randomisation: randomisation=TRUE
 # test under normality : randomisation=FALSE
 
-# Monte Carlo Test
+# 
 
-MC<- moran.mc(BT21$Bevölkerung.2014, lw, nsim=999)
+
+
+# Monte Carlo Test
+MC<- moran.mc(SPDF$emp_bev, lw, nsim=999)
 #What is the maximum value we can use for nsim??
 
 # View results (including p-value)
@@ -147,8 +185,8 @@ plot(MC, main="", las=1)
 ##############################################################################################
 # Moran Scatterplot: ALTERNATIVE BERECHNUNG
 
-n <- length(BB)
-y <- BB$Bevölkerung.2014
+n <- length(SPDF)
+y <- SPDF$Bevölkerung.2014
 
 # Transformieren w in Nachbarschaftsmatrix, welche die Intensität der räumlichen Beziehungen widerspiegelt
 wm <- nb2mat(nb, style='B')
@@ -183,14 +221,14 @@ moran.plot(y, rwm)
 # Berechnung spatially lagged values = durchschnittliche Nachbareinkommen für jedes Polygon 
 # Inc_lag <- lag.listw(lw, BB$Bevölkerung.2014)
 # irgendwie kein richtiges Mittel?
-Inc_lag <- lag.listw(rwm, BB$Bevölkerung.2014)
+Inc_lag <- lag.listw(rwm, SPDF$Bevölkerung.2014)
 
 # Wir können lagged values gegen Ursprungswerte plotten und ein lineares Regressionsmodell anpassen
 
 # Regressionsmodell
-M <- lm(Inc_lag ~ BB$Bevölkerung.2014)
+M <- lm(Inc_lag ~ SPDF$Bevölkerung.2014)
 
-plot(Inc_lag ~ BB$Bevölkerung.2014, pch=20, asp=1, las=1)
+plot(Inc_lag ~ SPDF$Bevölkerung.2014, pch=20, asp=1, las=1)
 
 # Anstieg der Regressionsgeraden
 coef(M)[2]
@@ -208,7 +246,7 @@ I_r <- vector(length=n)  # Create an empty vector
 
 for (i in 1:n){
   # Randomly shuffle income values
-  x <- sample(BB$Bevölkerung.2014, replace=FALSE)
+  x <- sample(SPDF$Bevölkerung.2014, replace=FALSE)
   # Compute new set of lagged values
   x.lag <- lag.listw(rwm, x)
   # Compute the regression slope and store its value
@@ -246,7 +284,7 @@ require("ape")
 #library(ape)
 
 # Nachbarschaftsmatrix W mit inversen Distanzgewichten
-point.dists <- as.matrix(dist(cbind(BB$c_long,BB$c_lat)))
+point.dists <- as.matrix(dist(cbind(SPDF$c_long,SPDF$c_lat)))
 point.dists.inv  <- 1/point.dists
 diag(point.dists.inv) <- 0
 
@@ -256,10 +294,12 @@ pdi <- mat2listw(point.dists.inv, style='B')
 # apply(mat, 1, sum)[1:15]
 
 
-moran(BB$Bevölkerung.2014, pdi, n=length(pdi$neighbours), S0=Szero(pdi))
-moran.test(BB$Bevölkerung.2014,pdi, randomisation=TRUE)
+moran(SPDF$Bevölkerung.2014, pdi, n=length(pdi$neighbours), S0=Szero(pdi))
+moran.test(SPDF$Bevölkerung.2014,pdi, randomisation=TRUE)
+
+
 # Monte Carlo Test
-MC<- moran.mc(BB$Bevölkerung.2014, pdi, nsim=2999)
+MC<- moran.mc(SPDF$Bevölkerung.2014, pdi, nsim=2999)
 
 # Plot the distribution (note that this is a density plot instead of a histogram)
 plot(MC, main="", las=1)
@@ -268,9 +308,9 @@ plot(MC, main="", las=1)
 # Transformieren w in Nachbarschaftsmatrix, welche die Intensität der räumlichen Beziehungen widerspiegelt
 # wm <- nb2mat(nb, style='B')
 
-Moran.I(BB$Bevölkerung.2014,point.dists.inv)
+Moran.I(SPDF$Bevölkerung.2014,point.dists.inv)
 
-Moran.I(BB$Bevölkerung.2014,wm)
+Moran.I(SPDF$Bevölkerung.2014,wm)
 
 #p.value=0 --> Nullhypothesis of clustering cannot be rejected (AT ALL)
 

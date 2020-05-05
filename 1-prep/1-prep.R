@@ -49,10 +49,14 @@ bz <- rgdal::readOGR(dsn="1-prep/shape",layer = "bz_berlin")
 Berlin <- Gemeinden[Gemeinden$SN_L %in% c("11"), ]
 BBB <- Gemeinden[Gemeinden$SN_L %in% c("12"), ]
 
+# reprojecting new Berlin shp (now including Bezirke) into the CRS of Brandenburg 
+common_crs <- CRS(proj4string(Gemeinden))
+bz <- spTransform(bz, common_crs)
 
-bz <- spTransform(bz, CRS("+init=epsg:25832"))
-#spTransform erzeugt andere Form von proj4string
-bz@proj4string <- Gemeinden@proj4string
+
+# bz <- spTransform(bz, CRS("+init=epsg:25832"))
+# spTransform erzeugt andere Form von proj4string
+# bz@proj4string <- Gemeinden@proj4string
 
 # Wichtig, dass die Objekte in den SpatialPolygonsDataFrames (Gemeinden,plr etc) in derselben Reihenfolge vorliegen, wie die Attributdaten, die wir sp?ter hinzuf?gen wollen. Deswegen sortieren wir die Gemeinden sp?ter nach ihrer id und die Bezirke hier nach der bz_id.
 
@@ -60,7 +64,7 @@ bz <- bz[order(bz@data$bz_id), ]
 bz@data$AGS <- c(11001001,11002002,11003003,11004004,11005005,11006006,11007007,11008008,11009009,11010010,11011011,11012012)
 
 
-# Zusammenfuehren von Berliner Bezirken und Brandenburg
+# Zusammenfuehren der Attributsdaten von Berliner Bezirken und Brandenburg
 
 emptydf <- BBB@data[1:12,]
 emptydf[1:12,] <-  Berlin@data[rep(seq_len(nrow(Berlin@data)), each = 12),]
@@ -74,15 +78,28 @@ bz@data <- emptydf
 #bz1 <- bz
 #bz1 <- spChFIDs(bz, paste("bz", row.names(bz), sep="."))
 
-BT <- rbind(bz,BBB)
-#entspricht: 
-#BT <- rbind.SpatialPolygonsDataFrame(bz,BBB,makeUniqueIDs = TRUE)
+# Folgende Verknüpfungen liefern Probleme bei Nachbarschaftsinformationen zwischen BB und BER in weiterer Analyse...
+# BT <- rbind(bz,BBB) 
+# analog
+BT <- rbind.SpatialPolygonsDataFrame(bz,BBB,makeUniqueIDs = TRUE)
 
 #Alternativen:
 #one_spdf <- do.call("rbind", c(args = list.df, makeUniqueIDs = TRUE)) 
 
-#change Feature ID hier nötig
-#BT1 <- spRbind(bz1,BBB)
+# sf statt sp Objekte?
+# join back to county layer with a spatial join, using left=FALSE (same as "inner_join")
+# BT <- st_join(bz, BBB, join=st_touches,left=FALSE)
+
+
+# change Feature ID hier nötig
+# BT <- spRbind(bz1,BBB)
+# row.names(BT) <- as.character(BT$id)
+
+# neu beschreiben hilft auch nicht gegen BER-BB Lücke...
+# SpatialPolygonsDataFrame(ob,data=as.data.frame("yourData"),proj4string=CRS("+proj=    aea > +ellps=GRS80 +datum=WGS84"))
+# BT <-  SpatialPolygonsDataFrame(geometry(BT),data=BT@data)
+# writeOGR(BT,"shapes","testShape",driver="ESRI Shapefile",)
+
 
 BT@data$id <- as.character(1:430)
 BT@data$AGS <- as.integer(BT@data$AGS)
