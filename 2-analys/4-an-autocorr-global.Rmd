@@ -39,13 +39,12 @@ library(sp)
 library(spdep)
 ```
 
-# Vorbereitung
+# global morans I (based on centroids)
 
-## Einlesen der shape- und Exceldaten
 
-## global morans I (based on centroids)
+## Vorbereitung
 
-This is Sparta!
+Einlesen der SpatialDataFrame objects aus lokalen rds-files. Sollte durch github download ersetzt werden.
 
 ```{r prep_data_1,warning = FALSE,message = FALSE, echo=TRUE}
 # Restore SpatialDataFrame object
@@ -57,7 +56,21 @@ SPDF <- BT[BT$reg %in% c(1,2), ]
 
 ```
 
-## Including Plots
+
+## Charakterisierung des Beobachtungsgebietes
+
+Das Beobachtungsgebiet zeichnet sich durch große Heterogenität der Raumeinheiten bezüglich vieler Merkmale aus. Viele Gemeinden sind großräumig abgegrenzt und weisen einen Bruchtteil der Einwohner aus den kleinflächigen, dicht besiedelten Berliner Bezirken auf. Die Raumeinteilung somit wenig einheitlich in der Größenordnung/Fläche und selbst autokorreliert.(Siehe Grafik XX)
+Die dünn besiedelten ländlichen Gemeinden des Brandenburger Umlandes werden zunächst ignoriert.
+
+Die Anzahl der Lagereimitarbeiter wird geschätzt und liegt aggregiert auf Gemeindeebene vor. Genaue Unternehmensstandorte sind nicht vorhanden.
+
+Die Bevölkerung auf Gemeindeebene wird durch statistische Schätzungen der Ämter jährlich aktualisiert 
+fortgeschrieben und durch einen Zensus alle 10 Jahre kontrolliert/überprüft und (für die zukunft?) angepasst. 
+Der nächste Zensus ist für 2021 angesetzt.
+
+Distanzen zwischen Gemeinden wird über Zentroide gemessen.
+
+## Quantilkarten ausgesuchter Attribute
 
 Mit Hilfe des Pakets tmap plotten wir die Verteilung per Quantil-Klassifikationsschema in \@ref(fig:overview):
 
@@ -88,7 +101,6 @@ Wir nutzen die Queen-Definition für Nachbarschaft:
 Angrenzende Polygone welche mind. 1 Knoten teilen (queen=TRUE) stehen in räuml. Beziehung
 ALternativ: Polygone welche mind. 1 Kante teilen (d.h. mind. 2 Knoten) (queen=FALSE) 
 
-
 ```{r prep_data_2,warning = FALSE,message = FALSE, echo=TRUE}
 #snap=sqrt(.Machine$double.eps*1000) erlaubt Lücken, wie sie durch das Einfügen Berliner Bezirke entstehen
 
@@ -102,6 +114,11 @@ nb_sqc <- nblag(nb_qc,2)
 nb_src <- nblag(nb_rc,2)
 
 ```
+
+
+
+
+
 
 
 
